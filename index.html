@@ -41,6 +41,8 @@
       }
     }
 
+    
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       background: var(--bg);
@@ -666,13 +668,26 @@
 
 </div><!-- /page-wrap -->
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
-  /* ── ESTADO ─────────────────────────────────────── */
-  var state = {
-    nombre: '', tipoDoc: '', numDoc: '', correo: '',
-    file: null, opts: [], newEmail: '', newPhone: ''
-  };
-  var currentPane = 1;
+const SUPABASE_URL = "https://wkuntngatmjxjqxapcgu.supabase.co";
+
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndrdW50bmdhdG1qeGpxeGFwY2d1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyOTcwOTksImV4cCI6MjA5Nzg3MzA5OX0.2Kjch8K_chweQCEDGsB9sRhALNNIzaePXceLZs8jGzs";
+
+const supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+console.log("SUPABASE OK");
+
+/* ── ESTADO ─────────────────────────────────────── */
+var state = {
+  nombre: '', tipoDoc: '', numDoc: '', correo: '',
+  file: null, opts: [], newEmail: '', newPhone: ''
+};
+var currentPane = 1;
 
   /* ── UTILIDADES ─────────────────────────────────── */
   var emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -851,20 +866,65 @@
   }
 
   /* ── ENVIAR ─────────────────────────────────────── */
-  function submitForm() {
-    /* Aquí puedes conectar tu endpoint:
-       fetch('/api/actualizar-datos', {
-         method: 'POST',
-         body: buildFormData()
-       }); */
-    $('confirm-email').textContent = state.correo;
-    $('ref-num').textContent = 'ACT-' + Date.now().toString(36).toUpperCase();
-    goTo(5);
-    document.querySelectorAll('.step-item').forEach(function(el) {
-      el.classList.remove('active');
-      el.classList.add('done');
-    });
+  async function submitForm() {
+
+  let documentoUrl = "";
+
+  if (state.file) {
+
+    const nombreArchivo =
+      Date.now() + "_" + state.file.name;
+
+    const { data, error } =
+      await supabaseClient.storage
+        .from("Documentos")
+        .upload(nombreArchivo, state.file);
+
+  if (error) {
+  console.error("ERROR STORAGE COMPLETO:", error);
+
+  alert(
+    "Mensaje: " + error.message +
+    "\nCódigo: " + error.statusCode +
+    "\nDetalles: " + JSON.stringify(error)
+  );
+
+  return;
+}
+
+    const { data: publicUrl } =
+      supabaseClient.storage
+        .from("Documentos")
+        .getPublicUrl(nombreArchivo);
+
+    documentoUrl = publicUrl.publicUrl;
   }
+
+  const { error } =
+    await supabaseClient
+      .from("solicitudes_actualizacion")
+      .insert([{
+        nombre: state.nombre,
+        tipodoc: state.tipoDoc,
+        numdoc: state.numDoc,
+        correo: state.correo,
+        newemail: state.newEmail,
+        newphone: state.newPhone,
+        documento_url: documentoUrl
+      }]);
+
+  if (error) {
+    alert("Error guardando datos");
+    console.error(error);
+    return;
+  }
+
+  $('confirm-email').textContent = state.correo;
+  $('ref-num').textContent =
+      'ACT-' + Date.now().toString(36).toUpperCase();
+
+  goTo(5);
+}
 
   /* ── HELPER: CONSTRUIR FormData ─────────────────── */
   function buildFormData() {
