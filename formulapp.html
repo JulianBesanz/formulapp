@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Actualización de Datos — Campaña Oficial</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:       #1a56db;
+      --blue-dark:  #1e429f;
+      --blue-light: #eef2ff;
+      --blue-ring:  rgba(26,86,219,0.15);
+      --red:        #e53e3e;
+      --red-ring:   rgba(229,62,62,0.12);
+      --green:      #16a34a;
+      --green-bg:   #dcfce7;
+      --text-1:     #111827;
+      --text-2:     #6b7280;
+      --bg:         #f9fafb;
+      --bg-card:    #ffffff;
+      --bg-sec:     #f3f4f6;
+      --border:     rgba(0,0,0,0.10);
+      --border-md:  rgba(0,0,0,0.18);
+      --radius:     10px;
+      --radius-lg:  14px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --text-1:    #f9fafb;
+        --text-2:    #9ca3af;
+        --bg:        #111827;
+        --bg-card:   #1f2937;
+        --bg-sec:    #374151;
+        --border:    rgba(255,255,255,0.10);
+        --border-md: rgba(255,255,255,0.18);
+        --blue-light:#1e3a8a;
+      }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text-1);
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .page-wrap {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    /* ── HEADER ─────────────────────────────────────────── */
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #dbeafe;
+      color: #1e40af;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-1);
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+    .header p {
+      font-size: 15px;
+      color: var(--text-2);
+      line-height: 1.65;
+    }
+    .header p .req { color: var(--red); }
+
+    /* ── PROGRESS ────────────────────────────────────────── */
+    .progress {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 2rem;
+    }
+    .step-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    .step-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 15px;
+      left: 50%;
+      width: 100%;
+      height: 2px;
+      background: var(--border-md);
+      z-index: 0;
+      transition: background 0.4s;
+    }
+    .step-item.done::after { background: var(--blue); }
+    .step-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+      border: 2px solid var(--border-md);
+      background: var(--bg-card);
+      color: var(--text-2);
+      z-index: 1;
+      transition: all 0.3s;
+      position: relative;
+    }
+    .step-item.active .step-circle {
+      border-color: var(--blue);
+      background: var(--blue);
+      color: #fff;
+    }
+    .step-item.done .step-circle {
+      border-color: var(--blue);
+      background: var(--blue);
+      color: #fff;
+    }
+    .step-label {
+      font-size: 11px;
+      color: var(--text-2);
+      margin-top: 7px;
+      text-align: center;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .step-item.active .step-label { color: var(--blue); font-weight: 600; }
+
+    /* ── CARD ────────────────────────────────────────────── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .card h2 {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin-bottom: 6px;
+    }
+    .card .sub {
+      font-size: 14px;
+      color: var(--text-2);
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    /* ── FIELDS ──────────────────────────────────────────── */
+    .field { margin-bottom: 1.1rem; }
+    .field:last-child { margin-bottom: 0; }
+    .field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin-bottom: 6px;
+    }
+    .field label .req { color: var(--red); margin-left: 2px; }
+    .field input,
+    .field select {
+      width: 100%;
+      height: 42px;
+      padding: 0 14px;
+      border: 1px solid var(--border-md);
+      border-radius: var(--radius);
+      font-size: 14px;
+      background: var(--bg-card);
+      color: var(--text-1);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .field input::placeholder { color: var(--text-2); opacity: 0.7; }
+    .field input:focus,
+    .field select:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px var(--blue-ring);
+    }
+    .field input.error,
+    .field select.error {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px var(--red-ring);
+    }
+    .select-wrap { position: relative; }
+    .select-wrap::after {
+      content: '\ea99';
+      font-family: 'tabler-icons';
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-2);
+      pointer-events: none;
+      font-size: 16px;
+    }
+    .err-msg {
+      font-size: 12px;
+      color: var(--red);
+      margin-top: 5px;
+      display: none;
+      align-items: center;
+      gap: 4px;
+    }
+    .err-msg.visible { display: flex; }
+
+    /* ── INFO BOX ────────────────────────────────────────── */
+    .info-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: var(--radius);
+      padding: 11px 14px;
+      font-size: 13px;
+      color: #1e40af;
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      margin-bottom: 1.25rem;
+      line-height: 1.5;
+    }
+    .info-box i { font-size: 17px; margin-top: 1px; flex-shrink: 0; }
+
+    /* ── UPLOAD ──────────────────────────────────────────── */
+    .upload-box {
+      border: 2px dashed var(--border-md);
+      border-radius: var(--radius-lg);
+      padding: 2rem 1.25rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s;
+      background: var(--bg-sec);
+      user-select: none;
+    }
+    .upload-box:hover {
+      border-color: var(--blue);
+      background: var(--blue-light);
+    }
+    .upload-box.has-file {
+      border-color: var(--blue);
+      background: var(--blue-light);
+      border-style: solid;
+    }
+    .upload-box .up-icon {
+      font-size: 36px;
+      color: var(--text-2);
+      margin-bottom: 10px;
+      display: block;
+      transition: color 0.2s;
+    }
+    .upload-box.has-file .up-icon { color: var(--blue); }
+    .upload-box .up-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin-bottom: 5px;
+    }
+    .upload-box .up-sub { font-size: 13px; color: var(--text-2); }
+    .hidden-input { display: none; }
+
+    /* ── UPDATE OPTIONS ──────────────────────────────────── */
+    .update-opts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 4px;
+    }
+    .opt-card {
+      border: 2px solid var(--border-md);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg-card);
+    }
+    .opt-card:hover {
+      border-color: var(--blue);
+      background: var(--blue-light);
+    }
+    .opt-card.selected {
+      border-color: var(--blue);
+      background: var(--blue-light);
+    }
+    .opt-card i {
+      font-size: 24px;
+      color: var(--text-2);
+      transition: color 0.2s;
+    }
+    .opt-card.selected i { color: var(--blue); }
+    .opt-card .opt-name { font-size: 14px; font-weight: 600; color: var(--text-1); }
+    .opt-card .opt-desc { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+
+    .subfield { display: none; margin-top: 1.25rem; }
+    .subfield.visible { display: block; }
+
+    /* ── BUTTONS ─────────────────────────────────────────── */
+    .btn-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.5rem;
+      gap: 10px;
+    }
+    .btn {
+      height: 44px;
+      padding: 0 24px;
+      border-radius: var(--radius);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-primary { background: var(--blue); color: #fff; }
+    .btn-primary:hover { background: var(--blue-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(26,86,219,0.3); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-1);
+      border: 1px solid var(--border-md);
+    }
+    .btn-secondary:hover { background: var(--bg-sec); }
+
+    /* ── REVIEW ──────────────────────────────────────────── */
+    .review-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+    .review-row:last-child { border-bottom: none; }
+    .rlabel { font-size: 13px; color: var(--text-2); flex-shrink: 0; }
+    .rval { font-size: 14px; font-weight: 600; color: var(--text-1); text-align: right; word-break: break-all; }
+    .rval.highlight { color: var(--blue); }
+
+    /* ── SUCCESS ─────────────────────────────────────────── */
+    .success-wrap { text-align: center; padding: 1.5rem 0.5rem; }
+    .success-circle {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--green-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem;
+    }
+    .success-circle i { font-size: 38px; color: var(--green); }
+    .success-wrap h2 { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
+    .success-wrap p { font-size: 15px; color: var(--text-2); line-height: 1.65; }
+    .time-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 1.5rem;
+      background: var(--bg-sec);
+      border-radius: var(--radius);
+      padding: 10px 18px;
+      font-size: 13px;
+      color: var(--text-2);
+    }
+    .ref-num {
+      margin-top: 1rem;
+      font-size: 13px;
+      color: var(--text-2);
+    }
+    .ref-num span { color: var(--blue); font-weight: 700; font-family: monospace; font-size: 15px; }
+
+    /* ── PANES ───────────────────────────────────────────── */
+    .pane { display: none; animation: fadeIn 0.25s ease; }
+    .pane.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── FOOTER ──────────────────────────────────────────── */
+    .footer {
+      text-align: center;
+      margin-top: 2rem;
+      font-size: 12px;
+      color: var(--text-2);
+      line-height: 1.7;
+    }
+    .footer a { color: var(--blue); text-decoration: none; }
+
+    @media (max-width: 480px) {
+      body { padding: 1rem 0.75rem 3rem; }
+      .card { padding: 1.25rem; }
+      .update-opts { grid-template-columns: 1fr; }
+      .step-label { font-size: 10px; }
+      .header h1 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="badge"><i class="ti ti-shield-check"></i> Campaña oficial de actualización</div>
+    <h1>Actualización de datos</h1>
+    <p>Mantén tu información al día para recibir una mejor atención.<br>
+    Los campos con <span class="req">*</span> son obligatorios.</p>
+  </div>
+
+  <!-- PROGRESS BAR -->
+  <div class="progress" role="progressbar" aria-label="Progreso del formulario">
+    <div class="step-item active" id="si1">
+      <div class="step-circle">1</div>
+      <div class="step-label">Identificación</div>
+    </div>
+    <div class="step-item" id="si2">
+      <div class="step-circle">2</div>
+      <div class="step-label">Documento</div>
+    </div>
+    <div class="step-item" id="si3">
+      <div class="step-circle">3</div>
+      <div class="step-label">Actualizar</div>
+    </div>
+    <div class="step-item" id="si4">
+      <div class="step-circle"><i class="ti ti-check" style="font-size:15px"></i></div>
+      <div class="step-label">Listo</div>
+    </div>
+  </div>
+
+  <!-- ── PASO 1: IDENTIFICACIÓN ──────────────────────────── -->
+  <div id="pane1" class="pane active">
+    <div class="card">
+      <h2>Información del propietario</h2>
+      <p class="sub">Ingresa los datos del titular de la cuenta tal como aparecen en tu documento de identidad.</p>
+
+      <div class="field">
+        <label for="nombre">Nombre completo <span class="req">*</span></label>
+        <input type="text" id="nombre" autocomplete="name"
+               placeholder="Ej: Juan Carlos Martínez López">
+        <div class="err-msg" id="err-nombre"><i class="ti ti-alert-circle"></i> Ingresa tu nombre completo.</div>
+      </div>
+
+      <div class="field">
+        <label for="tipo-doc">Tipo de documento <span class="req">*</span></label>
+        <div class="select-wrap">
+          <select id="tipo-doc">
+            <option value="">Selecciona una opción...</option>
+            <option value="CC">Cédula de ciudadanía</option>
+            <option value="CE">Cédula de extranjería</option>
+            <option value="PA">Pasaporte</option>
+            <option value="NIT">NIT</option>
+            <option value="TI">Tarjeta de identidad</option>
+          </select>
+        </div>
+        <div class="err-msg" id="err-tipo"><i class="ti ti-alert-circle"></i> Selecciona el tipo de documento.</div>
+      </div>
+
+      <div class="field">
+        <label for="num-doc">Número de documento <span class="req">*</span></label>
+        <input type="text" id="num-doc" autocomplete="off"
+               placeholder="Ej: 1005432187" inputmode="numeric">
+        <div class="err-msg" id="err-num"><i class="ti ti-alert-circle"></i> Ingresa tu número de documento.</div>
+      </div>
+
+      <div class="field">
+        <label for="correo">Correo electrónico <span class="req">*</span></label>
+        <input type="email" id="correo" autocomplete="email"
+               placeholder="correo@ejemplo.com">
+        <div class="err-msg" id="err-correo"><i class="ti ti-alert-circle"></i> Ingresa un correo electrónico válido.</div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <span></span>
+      <button class="btn btn-primary" onclick="goTo2()">
+        Continuar <i class="ti ti-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── PASO 2: DOCUMENTO ───────────────────────────────── -->
+  <div id="pane2" class="pane">
+    <div class="card">
+      <h2>Foto del documento</h2>
+      <p class="sub">Adjunta una foto o escaneo de tu documento de identidad. Debe ser legible y mostrar todos los datos claramente.</p>
+
+      <div class="info-box">
+        <i class="ti ti-info-circle"></i>
+        <span>Formatos aceptados: <strong>JPG, PNG o PDF</strong>. Tamaño máximo <strong>5 MB</strong>.
+        Asegúrate de que el documento esté vigente y los datos sean visibles.</span>
+      </div>
+
+      <div class="upload-box" id="uploadBox"
+           onclick="document.getElementById('fileInput').click()"
+           role="button" tabindex="0"
+           aria-label="Adjuntar documento de identidad"
+           onkeydown="if(event.key==='Enter'||event.key===' ')this.click()">
+        <i class="ti ti-upload up-icon" id="uploadIcon"></i>
+        <div class="up-title" id="uploadTitle">Haz clic para adjuntar el documento</div>
+        <div class="up-sub" id="uploadSub">JPG, PNG o PDF — máx. 5 MB</div>
+      </div>
+      <input type="file" class="hidden-input" id="fileInput"
+             accept=".jpg,.jpeg,.png,.pdf" onchange="handleFile(this)">
+
+      <div class="err-msg" id="err-file" style="margin-top:10px">
+        <i class="ti ti-alert-circle"></i> Debes adjuntar la foto de tu documento.
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goTo(1)">
+        <i class="ti ti-arrow-left"></i> Atrás
+      </button>
+      <button class="btn btn-primary" onclick="goTo3()">
+        Continuar <i class="ti ti-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── PASO 3: QUÉ ACTUALIZAR ──────────────────────────── -->
+  <div id="pane3" class="pane">
+    <div class="card">
+      <h2>¿Qué deseas actualizar?</h2>
+      <p class="sub">Selecciona el dato de contacto que necesitas actualizar. Solo se permite modificar el <strong>correo electrónico</strong> y el <strong>teléfono</strong>.</p>
+
+      <div class="update-opts">
+        <div class="opt-card" id="opt-email" onclick="selectOpt('email')"
+             role="checkbox" aria-checked="false" tabindex="0"
+             onkeydown="if(event.key==='Enter'||event.key===' ')selectOpt('email')">
+          <i class="ti ti-mail"></i>
+          <div>
+            <div class="opt-name">Correo electrónico</div>
+            <div class="opt-desc">Actualizar e-mail de contacto</div>
+          </div>
+        </div>
+        <div class="opt-card" id="opt-phone" onclick="selectOpt('phone')"
+             role="checkbox" aria-checked="false" tabindex="0"
+             onkeydown="if(event.key==='Enter'||event.key===' ')selectOpt('phone')">
+          <i class="ti ti-device-mobile"></i>
+          <div>
+            <div class="opt-name">Teléfono / Celular</div>
+            <div class="opt-desc">Actualizar número de contacto</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="err-msg" id="err-opt" style="margin-top:10px">
+        <i class="ti ti-alert-circle"></i> Selecciona al menos una opción para continuar.
+      </div>
+
+      <!-- Sub-campo correo -->
+      <div class="subfield" id="sf-email">
+        <div class="field" style="margin-bottom:0">
+          <label for="new-email">Nuevo correo electrónico <span class="req">*</span></label>
+          <input type="email" id="new-email" autocomplete="email"
+                 placeholder="nuevo@correo.com">
+          <div class="err-msg" id="err-new-email">
+            <i class="ti ti-alert-circle"></i> Ingresa un correo electrónico válido.
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-campo teléfono -->
+      <div class="subfield" id="sf-phone">
+        <div class="field" style="margin-bottom:0">
+          <label for="new-phone">Nuevo número de teléfono <span class="req">*</span></label>
+          <input type="tel" id="new-phone" autocomplete="tel"
+                 placeholder="Ej: 3001234567" inputmode="numeric">
+          <div class="err-msg" id="err-new-phone">
+            <i class="ti ti-alert-circle"></i> Ingresa un número de teléfono válido (mínimo 7 dígitos).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goTo(2)">
+        <i class="ti ti-arrow-left"></i> Atrás
+      </button>
+      <button class="btn btn-primary" onclick="goToReview()">
+        Revisar solicitud <i class="ti ti-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── PASO 4: REVISIÓN ────────────────────────────────── -->
+  <div id="pane4" class="pane">
+    <div class="card">
+      <h2>Revisa tu información</h2>
+      <p class="sub">Verifica que todos los datos sean correctos antes de enviar. Si necesitas corregir algo, regresa al paso correspondiente.</p>
+      <div id="review-content"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goTo(3)">
+        <i class="ti ti-arrow-left"></i> Atrás
+      </button>
+      <button class="btn btn-primary" onclick="submitForm()">
+        <i class="ti ti-send"></i> Enviar solicitud
+      </button>
+    </div>
+  </div>
+
+  <!-- ── PASO 5: CONFIRMACIÓN ────────────────────────────── -->
+  <div id="pane5" class="pane">
+    <div class="card">
+      <div class="success-wrap">
+        <div class="success-circle">
+          <i class="ti ti-circle-check"></i>
+        </div>
+        <h2>¡Solicitud enviada con éxito!</h2>
+        <p>
+          Tu solicitud de actualización ha sido recibida.<br>
+          Recibirás una confirmación al correo<br>
+          <strong id="confirm-email" style="color:var(--blue)"></strong>
+        </p>
+        <div class="time-badge">
+          <i class="ti ti-clock"></i>
+          Tiempo de procesamiento: 1 a 3 días hábiles
+        </div>
+        <div class="ref-num">
+          Número de referencia: <span id="ref-num"></span>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row" style="justify-content:center">
+      <button class="btn btn-secondary" onclick="resetForm()">
+        <i class="ti ti-refresh"></i> Enviar otra solicitud
+      </button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>Este formulario es de uso exclusivo para clientes registrados.<br>
+    Tus datos están protegidos bajo nuestra
+    <a href="#" onclick="return false">Política de Privacidad</a>.</p>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<script>
+  /* ── ESTADO ─────────────────────────────────────── */
+  var state = {
+    nombre: '', tipoDoc: '', numDoc: '', correo: '',
+    file: null, opts: [], newEmail: '', newPhone: ''
+  };
+  var currentPane = 1;
+
+  /* ── UTILIDADES ─────────────────────────────────── */
+  var emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  function $(id) { return document.getElementById(id); }
+
+  function setErrVisible(errId, show) {
+    var el = $(errId);
+    if (show) el.classList.add('visible');
+    else el.classList.remove('visible');
+  }
+
+  function setInputError(inputId, hasError) {
+    if (hasError) $(inputId).classList.add('error');
+    else $(inputId).classList.remove('error');
+  }
+
+  function fieldErr(inputId, errId, show) {
+    setInputError(inputId, show);
+    setErrVisible(errId, show);
+  }
+
+  /* ── PASOS ──────────────────────────────────────── */
+  function setStep(n) {
+    for (var i = 1; i <= 4; i++) {
+      var el = $('si' + i);
+      el.classList.remove('active', 'done');
+      if (i < n) el.classList.add('done');
+      else if (i === n) el.classList.add('active');
+    }
+  }
+
+  function goTo(n) {
+    document.querySelectorAll('.pane').forEach(function(p) {
+      p.classList.remove('active');
+    });
+    $('pane' + n).classList.add('active');
+    currentPane = n;
+    setStep(n);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ── PASO 1 → 2 ─────────────────────────────────── */
+  function goTo2() {
+    var ok = true;
+    var n = $('nombre').value.trim();
+    var t = $('tipo-doc').value;
+    var d = $('num-doc').value.trim();
+    var c = $('correo').value.trim();
+
+    if (!n) { fieldErr('nombre', 'err-nombre', true); ok = false; }
+    else     { fieldErr('nombre', 'err-nombre', false); }
+
+    if (!t) { fieldErr('tipo-doc', 'err-tipo', true); ok = false; }
+    else    { fieldErr('tipo-doc', 'err-tipo', false); }
+
+    if (!d || !/^\d{5,20}$/.test(d)) { fieldErr('num-doc', 'err-num', true); ok = false; }
+    else                               { fieldErr('num-doc', 'err-num', false); }
+
+    if (!emailRx.test(c)) { fieldErr('correo', 'err-correo', true); ok = false; }
+    else                   { fieldErr('correo', 'err-correo', false); }
+
+    if (ok) {
+      state.nombre  = n;
+      state.tipoDoc = $('tipo-doc').options[$('tipo-doc').selectedIndex].text;
+      state.numDoc  = d;
+      state.correo  = c;
+      goTo(2);
+    }
+  }
+
+  /* ── ARCHIVO ─────────────────────────────────────── */
+  function handleFile(input) {
+    if (input.files && input.files[0]) {
+      var f = input.files[0];
+      if (f.size > 5 * 1024 * 1024) {
+        setErrVisible('err-file', true);
+        $('err-file').querySelector('span') &&
+          ($('err-file').innerHTML = '<i class="ti ti-alert-circle"></i> El archivo supera los 5 MB permitidos.');
+        return;
+      }
+      state.file = f;
+      var box = $('uploadBox');
+      box.classList.add('has-file');
+      $('uploadIcon').className = 'ti ti-file-check up-icon';
+      $('uploadTitle').textContent = f.name;
+      $('uploadSub').textContent = 'Archivo listo — clic para cambiar';
+      setErrVisible('err-file', false);
+    }
+  }
+
+  /* ── PASO 2 → 3 ─────────────────────────────────── */
+  function goTo3() {
+    if (!state.file) {
+      setErrVisible('err-file', true);
+      return;
+    }
+    goTo(3);
+  }
+
+  /* ── OPCIONES ────────────────────────────────────── */
+  function selectOpt(type) {
+    var el   = $('opt-' + type);
+    var sf   = $('sf-' + type);
+    var isOn = el.classList.contains('selected');
+
+    if (isOn) {
+      el.classList.remove('selected');
+      el.setAttribute('aria-checked', 'false');
+      sf.classList.remove('visible');
+      state.opts = state.opts.filter(function(o) { return o !== type; });
+    } else {
+      el.classList.add('selected');
+      el.setAttribute('aria-checked', 'true');
+      sf.classList.add('visible');
+      if (state.opts.indexOf(type) === -1) state.opts.push(type);
+    }
+    setErrVisible('err-opt', false);
+  }
+
+  /* ── PASO 3 → REVISIÓN ──────────────────────────── */
+  function goToReview() {
+    if (state.opts.length === 0) {
+      setErrVisible('err-opt', true);
+      return;
+    }
+    var ok = true;
+
+    if (state.opts.indexOf('email') !== -1) {
+      var ne = $('new-email').value.trim();
+      if (!emailRx.test(ne)) {
+        fieldErr('new-email', 'err-new-email', true);
+        ok = false;
+      } else {
+        state.newEmail = ne;
+        fieldErr('new-email', 'err-new-email', false);
+      }
+    }
+
+    if (state.opts.indexOf('phone') !== -1) {
+      var np = $('new-phone').value.trim();
+      if (!/^\d{7,15}$/.test(np)) {
+        fieldErr('new-phone', 'err-new-phone', true);
+        ok = false;
+      } else {
+        state.newPhone = np;
+        fieldErr('new-phone', 'err-new-phone', false);
+      }
+    }
+
+    if (!ok) return;
+    buildReview();
+    goTo(4);
+  }
+
+  /* ── CONSTRUIR RESUMEN ──────────────────────────── */
+  function buildReview() {
+    var rows = [
+      { l: 'Nombre completo',       v: state.nombre,  h: false },
+      { l: 'Tipo de documento',     v: state.tipoDoc, h: false },
+      { l: 'Número de documento',   v: state.numDoc,  h: false },
+      { l: 'Correo registrado',     v: state.correo,  h: false },
+      { l: 'Documento adjunto',     v: state.file ? state.file.name : '—', h: false }
+    ];
+    if (state.opts.indexOf('email') !== -1)
+      rows.push({ l: 'Nuevo correo electrónico', v: state.newEmail, h: true });
+    if (state.opts.indexOf('phone') !== -1)
+      rows.push({ l: 'Nuevo teléfono / celular', v: state.newPhone,  h: true });
+
+    $('review-content').innerHTML = rows.map(function(r) {
+      return '<div class="review-row">' +
+               '<span class="rlabel">' + r.l + '</span>' +
+               '<span class="rval' + (r.h ? ' highlight' : '') + '">' + r.v + '</span>' +
+             '</div>';
+    }).join('');
+  }
+
+  /* ── ENVIAR ─────────────────────────────────────── */
+  function submitForm() {
+    /* Aquí puedes conectar tu endpoint:
+       fetch('/api/actualizar-datos', {
+         method: 'POST',
+         body: buildFormData()
+       }); */
+    $('confirm-email').textContent = state.correo;
+    $('ref-num').textContent = 'ACT-' + Date.now().toString(36).toUpperCase();
+    goTo(5);
+    document.querySelectorAll('.step-item').forEach(function(el) {
+      el.classList.remove('active');
+      el.classList.add('done');
+    });
+  }
+
+  /* ── HELPER: CONSTRUIR FormData ─────────────────── */
+  function buildFormData() {
+    var fd = new FormData();
+    fd.append('nombre',   state.nombre);
+    fd.append('tipoDoc',  state.tipoDoc);
+    fd.append('numDoc',   state.numDoc);
+    fd.append('correo',   state.correo);
+    fd.append('documento', state.file);
+    if (state.opts.indexOf('email') !== -1)  fd.append('newEmail', state.newEmail);
+    if (state.opts.indexOf('phone') !== -1)  fd.append('newPhone', state.newPhone);
+    return fd;
+  }
+
+  /* ── RESET ───────────────────────────────────────── */
+  function resetForm() {
+    state = { nombre:'', tipoDoc:'', numDoc:'', correo:'', file:null, opts:[], newEmail:'', newPhone:'' };
+    ['nombre','num-doc','correo','new-email','new-phone'].forEach(function(id) {
+      $(id).value = '';
+      $(id).classList.remove('error');
+    });
+    $('tipo-doc').value = '';
+    $('tipo-doc').classList.remove('error');
+    $('fileInput').value = '';
+    $('uploadBox').classList.remove('has-file');
+    $('uploadIcon').className = 'ti ti-upload up-icon';
+    $('uploadTitle').textContent = 'Haz clic para adjuntar el documento';
+    $('uploadSub').textContent   = 'JPG, PNG o PDF — máx. 5 MB';
+    ['opt-email','opt-phone'].forEach(function(id) {
+      $(id).classList.remove('selected');
+      $(id).setAttribute('aria-checked','false');
+    });
+    ['sf-email','sf-phone'].forEach(function(id) {
+      $(id).classList.remove('visible');
+    });
+    document.querySelectorAll('.err-msg').forEach(function(el) {
+      el.classList.remove('visible');
+    });
+    goTo(1);
+  }
+</script>
+
+</body>
+</html>
